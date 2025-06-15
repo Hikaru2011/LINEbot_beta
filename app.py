@@ -5,6 +5,8 @@ from linebot import LineBotApi , WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
+import os
+
 app = Flask(__name__)
 
 #通信するためのキーを取得。
@@ -34,3 +36,7 @@ def handle_message(event):
         event.reply_token ,#eventに返すことを宣告
         TextSendMessage(text = reply)
         )
+    
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
