@@ -10,16 +10,16 @@ import os
 app = Flask(__name__)
 
 #通信するためのキーを取得。
-LINE_CHANNEL_ACCESS_TOKEN = LineBotApi("LINE_CHANNEL_ACCESS_TOKEN")
-LINE_CHANNEL_SECRET = LineBotApi("LINE_CHANNEL_SECRET")
+LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
+LINE_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
 
 #そのキーでインスタンスを作る
-line_bot_api = LineBotApi("LINE_CHANNEL_ACCESS_TOKEN")
-handler = WebhookHandler("LINE_CHANNEL_SECRET")
+line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 @app.route("/callback", methods=["POST"]) #(@は、この時,,,)/callbackサーバーにリクエストが来た(POST)ら関数
 def callback():
-    signarure = request.headers["X-Line-Signature"] #/callbackに来たデータのタイトルをとって確認
+    signature = request.headers["X-Line-Signature"] #/callbackに来たデータのタイトルをとって確認
     body = request.get_data(as_text=True) #/callbackに来たデータの中身をとってtext型で返す。
 
     try:
