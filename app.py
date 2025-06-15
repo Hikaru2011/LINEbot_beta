@@ -32,7 +32,7 @@ def callback():
 def handle_message(event):
     user_message = event.message.text
     reply = f"あなたのメッセージは「{user_message}」ですね？"
-    event.message(
+    line_bot_api.reply_message(
         event.reply_token ,#eventに返すことを宣告
         TextSendMessage(text = reply)
         )
