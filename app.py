@@ -37,6 +37,11 @@ def handle_message(event):
         TextSendMessage(text = reply)
         )
     
+@app.route("/")
+def index():
+    return "Hello! This is the root page."
+
+    
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
