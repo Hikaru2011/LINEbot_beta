@@ -26,7 +26,7 @@ def callback():
         abort(400) #エラーが出たら、エラーコード400を返す
     return "OK"
 
-@handler.app(MessageEvent, message=TextMessage) #LINEに送られてきて、テキストだったとき関数
+@handler.add(MessageEvent, message=TextMessage) #LINEに送られてきて、テキストだったとき関数
 def handle_message(event):
     user_message = event.message.text
     reply = f"あなたのメッセージは「{user_message}」ですね？"
