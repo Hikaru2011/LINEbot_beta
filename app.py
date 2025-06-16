@@ -7,6 +7,12 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 import os
 
+from datetime import datetime
+
+import pandas as pd
+
+from pathlib import Path
+
 app = Flask(__name__)
 
 #通信するためのキーを取得。
@@ -16,6 +22,19 @@ LINE_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
 #そのキーでインスタンスを作る
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
+
+def append_excel(message_text, timestamp_str):
+    file_path = "line_message.xlsx"
+
+    if Path(file_path).exists():
+
+        df = pd.read_excel(file_path)
+    else:
+        df = pd.DataFrame(columns=["投稿時間","メッセージ"])
+    
+    new = {"投稿時間":timestamp_str,"メッセージ":message_text}
+
+    df = df.concat([df,pd.DataFrame([new])], ignore_index=True) #つなげる((もとのdf,新しく作ったdf(newの1行),indexは振りなおす)
 
 @app.route("/callback", methods=["POST"]) #(@は、この時,,,)/callbackサーバーにリクエストが来た(POST)ら関数を作動。
 def callback():
@@ -31,11 +50,12 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage) #LINEに送られてきて、テキストだったとき関数を作動
 def handle_message(event):
     user_message = event.message.text
-    reply = f"あなたのメッセージは「{user_message}」ですね？"
-    line_bot_api.reply_message(
-        event.reply_token ,#eventに返すことを宣告
-        TextSendMessage(text = reply)
-        )
+    timestamp = event.timestamp / 1000 #ミリ秒を秒に
+    dt = datetime.fromtimestamp(timestamp) #それを人間が見れる形に
+
+    dt_str = dt.steftime("%Y-%m-%d %H:%M:%S")
+
+    append_excel(user_message,dt_str)  
     
 @app.route("/")
 def index():
