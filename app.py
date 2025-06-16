@@ -9,6 +9,7 @@ import os
 
 from datetime import datetime
 
+from numpy import False_
 import pandas as pd
 
 from pathlib import Path
@@ -35,6 +36,8 @@ def append_excel(message_text, timestamp_str):
     new = {"投稿時間":timestamp_str,"メッセージ":message_text}
 
     df = df.concat([df,pd.DataFrame([new])], ignore_index=True) #つなげる((もとのdf,新しく作ったdf(newの1行),indexは振りなおす)
+    
+    df.to_excel(file_path,index=False)
 
 @app.route("/callback", methods=["POST"]) #(@は、この時,,,)/callbackサーバーにリクエストが来た(POST)ら関数を作動。
 def callback():
