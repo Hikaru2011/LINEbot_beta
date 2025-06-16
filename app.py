@@ -75,6 +75,8 @@ def handle_message(event):
 
     dt_str = dt.strftime("%Y-%m-%d %H:%M:%S")
 
+    print(f"Received message: {user_message} at {dt_str}")
+    
     append_excel(user_message,dt_str)  
     
 @app.route("/")
