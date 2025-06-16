@@ -17,7 +17,7 @@ LINE_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
-@app.route("/callback", methods=["POST"]) #(@は、この時,,,)/callbackサーバーにリクエストが来た(POST)ら関数
+@app.route("/callback", methods=["POST"]) #(@は、この時,,,)/callbackサーバーにリクエストが来た(POST)ら関数を作動。
 def callback():
     signature = request.headers["X-Line-Signature"] #/callbackに来たデータのタイトルをとって確認
     body = request.get_data(as_text=True) #/callbackに来たデータの中身をとってtext型で返す。
@@ -28,7 +28,7 @@ def callback():
         abort(400) #エラーが出たら、エラーコード400を返す
     return "OK"
 
-@handler.add(MessageEvent, message=TextMessage) #LINEに送られてきて、テキストだったとき関数
+@handler.add(MessageEvent, message=TextMessage) #LINEに送られてきて、テキストだったとき関数を作動
 def handle_message(event):
     user_message = event.message.text
     reply = f"あなたのメッセージは「{user_message}」ですね？"
