@@ -9,10 +9,13 @@ import os
 
 from datetime import datetime
 
-from numpy import False_
 import pandas as pd
 
 from pathlib import Path
+
+import gspread
+from gspread_dataframe import get_as_dataframe, set_with_dataframe
+from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)
 
@@ -25,19 +28,35 @@ line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 def append_excel(message_text, timestamp_str):
-    file_path = "line_message.xlsx"
 
-    if Path(file_path).exists():
+    #許可できる動作を定義
+    scope = [
+  "https://www.googleapis.com/auth/spreadsheets",
+  "https://www.googleapis.com/auth/drive"
+  ]
+    
+    #認証情報を取得
+    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    
+    #認証→通信のためのものを格納。
+    client = gspread.authorize(creds)
 
-        df = pd.read_excel(file_path)
-    else:
+    #通信のためのものを使ってシート１(1枚目)を取得
+    sheet = client.open("LINEbot-log").sheet1
+
+    #現存データをdfに
+    try:
+        df = get_as_dataframe(sheet).dropna(how="all")
+    except:
         df = pd.DataFrame(columns=["投稿時間","メッセージ"])
+
     
     new = {"投稿時間":timestamp_str,"メッセージ":message_text}
 
     df = df.concat([df,pd.DataFrame([new])], ignore_index=True) #つなげる((もとのdf,新しく作ったdf(newの1行),indexは振りなおす)
-    
-    df.to_excel(file_path,index=False)
+
+    sheet.clear()
+    set_with_dataframe(sheet, df)
 
 @app.route("/callback", methods=["POST"]) #(@は、この時,,,)/callbackサーバーにリクエストが来た(POST)ら関数を作動。
 def callback():
@@ -56,7 +75,7 @@ def handle_message(event):
     timestamp = event.timestamp / 1000 #ミリ秒を秒に
     dt = datetime.fromtimestamp(timestamp) #それを人間が見れる形に
 
-    dt_str = dt.steftime("%Y-%m-%d %H:%M:%S")
+    dt_str = dt.strftime("%Y-%m-%d %H:%M:%S")
 
     append_excel(user_message,dt_str)  
     
