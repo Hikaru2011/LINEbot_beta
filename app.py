@@ -34,7 +34,7 @@ def append_excel(message_text, timestamp_str):
   ]
     
     #認証情報を取得
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name("formal-analyzer-463112-c6-e394ee3ce1d7.json", scope)
     
     #認証→通信のためのものを格納。
     client = gspread.authorize(creds)
@@ -76,7 +76,7 @@ def handle_message(event):
     dt_str = dt.strftime("%Y-%m-%d %H:%M:%S")
 
     print(f"Received message: {user_message} at {dt_str}")
-    
+
     append_excel(user_message,dt_str)  
     
 @app.route("/")
