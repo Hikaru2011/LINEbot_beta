@@ -11,8 +11,6 @@ from datetime import datetime
 
 import pandas as pd
 
-from pathlib import Path
-
 import gspread
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 from oauth2client.service_account import ServiceAccountCredentials
@@ -53,7 +51,7 @@ def append_excel(message_text, timestamp_str):
     
     new = {"投稿時間":timestamp_str,"メッセージ":message_text}
 
-    df = df.concat([df,pd.DataFrame([new])], ignore_index=True) #つなげる((もとのdf,新しく作ったdf(newの1行),indexは振りなおす)
+    df = pd.concat([df,pd.DataFrame([new])], ignore_index=True) #つなげる((もとのdf,新しく作ったdf(newの1行),indexは振りなおす)
 
     sheet.clear()
     set_with_dataframe(sheet, df)
