@@ -8,7 +8,7 @@ from linebot.models import MessageEvent, TextMessage, ImageMessage
 
 import os
 
-from datetime import datetime
+from datetime import datetime , timezone , timedelta
 
 import pandas as pd
 
@@ -19,6 +19,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from oauth2client.service_account import ServiceAccountCredentials
+from pytz import timezone
 
 
 app = Flask(__name__)
@@ -120,7 +121,8 @@ def handle_message(event):
     user_name = getname(event)
     user_message = event.message.text
     timestamp = event.timestamp / 1000 #ミリ秒を秒に
-    dt = datetime.fromtimestamp(timestamp) #それを人間が見れる形に
+    dt = datetime.fromtimestamp(timestamp,tz=timezone.utc) #それを人間が見れる形に
+    dt = dt.astimezone(timezone(timedelta(hours=9)))
     dt_str = dt.strftime("%Y-%m-%d %H:%M:%S")
 
     print(f"Received message: {user_message} at {dt_str}")
@@ -132,7 +134,8 @@ def handle_message(event):
     user_name = getname(event)
 
     timestamp = event.timestamp / 1000 #ミリ秒を秒に
-    dt = datetime.fromtimestamp(timestamp) #それを人間が見れる形に
+    dt = datetime.fromtimestamp(timestamp,tz=timezone.utc) #それを人間が見れる形に
+    dt = dt.astimezone(timezone(timedelta(hours=9)))
     dt_str = dt.strftime("%Y-%m-%d %H:%M:%S")
 
     image_id = event.message.id
