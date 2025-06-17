@@ -89,8 +89,8 @@ def upload_to_drive(file_path,file_name):
     ).execute()
 
     service.permissions().create(
-        fileId=uploaded_file["id"]
-        body={"rore":"reder","type":"anyone"}
+        fileId=uploaded_file["id"],
+        body={"role":"reader","type":"anyone"}
     ).execute()
 
     file_url = f"https://drive.google.comuc?id={uploaded_file["id"]}"
