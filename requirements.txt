@@ -1,8 +1,8 @@
-flask
-gunicorn
+Flask
 line-bot-sdk
 pandas
-openpyxl
 gspread
-gspread_dataframe
+gspread-dataframe
 oauth2client
+google-api-python-client
+gunicorn
